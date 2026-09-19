@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Встречи в Dota 2 — когда вы играли вместе или друг против друга?</title>
+<meta name="description" content="Введите два ID из Dota 2 и узнайте, сколько раз и когда вы встречались в матчах — в одной команде или на противоположных сторонах.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><text y="26" font-size="26">⚔️</text></svg>'>
+<link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+<div class="page">
+
+  <header class="site-header">
+    <div class="logo" aria-hidden="true">⚔️</div>
+    <div>
+      <h1>Встречи в Dota 2</h1>
+      <p class="tagline">Сколько раз и когда вы играли вместе — или друг против друга</p>
+    </div>
+  </header>
+
+  <section class="card form-card">
+    <div class="tabs" role="tablist" aria-label="Режим поиска">
+      <button type="button" class="tab active" data-tab="players">Два игрока</button>
+      <button type="button" class="tab" data-tab="match">Разбор матча</button>
+      <button type="button" class="tab" data-tab="crew">Невидимая тусовка</button>
+    </div>
+
+    <form id="search-form" autocomplete="off" novalidate>
+      <div class="id-inputs">
+        <div class="id-field">
+          <label for="input-a">Ваш ID</label>
+          <input id="input-a" name="a" type="text" spellcheck="false" autocomplete="off"
+                 placeholder="напр. 70388657, SteamID64 или ссылка на профиль">
+        </div>
+        <div class="vs-badge" aria-hidden="true">⚡</div>
+        <div class="id-field">
+          <label for="input-b">ID второго игрока</label>
+          <input id="input-b" name="b" type="text" spellcheck="false" autocomplete="off"
+                 placeholder="любой профиль Dota 2">
+        </div>
+      </div>
+
+      <div class="options">
+        <label class="option">
+          <span>Глубина поиска</span>
+          <select id="depth">
+            <option value="all" selected>Вся история (точнее, но дольше)</option>
+            <option value="2000">Последние ~2000 матчей каждого</option>
+            <option value="500">Последние ~500 матчей (быстро)</option>
+          </select>
+        </label>
+        <label class="option checkbox">
+          <input type="checkbox" id="include-insignificant">
+          <span>Включая матчи с ботами и кастомные режимы</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="primary" id="submit-btn">Найти встречи</button>
+        <button type="button" class="ghost cancel-btn" data-cancel hidden>Отмена</button>
+      </div>
+
+      <details class="help">
+        <summary>Где взять ID?</summary>
+        <ul>
+          <li>Откройте свой профиль на <a href="https://www.opendota.com" target="_blank" rel="noopener">opendota.com</a> — число в адресе (<code>opendota.com/players/<b>70388657</b></code>) и есть ID Dota 2.</li>
+          <li>Можно вставить ссылку на профиль OpenDota / Dotabuff / Steam, SteamID64 (начинается с <code>7656119…</code>) или SteamID3 (<code>U:1:…</code>) — конвертируем автоматически.</li>
+          <li>Свой SteamID64 также можно посмотреть через сервисы вроде <a href="https://steamid.io" target="_blank" rel="noopener">steamid.io</a>.</li>
+        </ul>
+      </details>
+    </form>
+
+    <form id="match-form" autocomplete="off" novalidate hidden>
+      <div class="id-inputs two">
+        <div class="id-field">
+          <label for="input-mid">ID матча</label>
+          <input id="input-mid" type="text" spellcheck="false"
+                 placeholder="напр. 9003716191 или ссылка opendota.com/matches/…">
+        </div>
+        <div class="id-field">
+          <label for="input-ma">Ваш ID</label>
+          <input id="input-ma" type="text" spellcheck="false" autocomplete="off"
+                 placeholder="ваш ID Dota 2">
+        </div>
+      </div>
+      <div class="actions">
+        <button type="submit" class="primary" id="match-btn">Разобрать матч</button>
+        <button type="button" class="ghost cancel-btn" data-cancel hidden>Отмена</button>
+      </div>
+      <p class="hint muted">Покажу всех игроков матча и сколько раз вы встречались с каждым — по последним ~2000 матчам каждого (занимает 20–40 секунд из-за лимитов бесплатного API). Полный список встреч с датами — кнопкой «Все встречи» у игрока.</p>
+    </form>
+
+    <form id="crew-form" autocomplete="off" novalidate hidden>
+      <div class="id-inputs two">
+        <div class="id-field">
+          <label for="input-ca">Ваш ID</label>
+          <input id="input-ca" type="text" spellcheck="false" autocomplete="off"
+                 placeholder="ваш ID Dota 2">
+        </div>
+      </div>
+      <div class="options">
+        <label class="option">
+          <span>Точность</span>
+          <select id="crew-depth">
+            <option value="25x500" selected>Быстро: топ-25 × ~500 матчей</option>
+            <option value="15x2000">Точно: топ-15 × ~2000 матчей</option>
+            <option value="10x5000">Максимум: топ-10 × ~5000 матчей</option>
+          </select>
+        </label>
+      </div>
+      <div class="actions">
+        <button type="submit" class="primary" id="crew-btn">Найти тусовку</button>
+        <button type="button" class="ghost cancel-btn" data-cancel hidden>Отмена</button>
+      </div>
+      <p class="hint muted">Проверю ваших самых частых попутчиков по OpenDota и посчитаю, сколько раз вы оказывались в одном матче <b>не в пати</b> — то есть судьба свела вас случайно. Чем выше точность, тем глубже история каждого попутчика и тем дольше поиск (2–4 минуты на «Точно»). Твоя собственная история всегда сканируется до 10 000 матчей.</p>
+    </form>
+
+    <div id="error-box" class="error-box" role="alert" hidden></div>
+  </section>
+
+  <section id="status" class="card status-card" hidden>
+    <div class="status-head">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="status-text">
+        <div id="status-title">Загрузка…</div>
+        <div id="status-sub" class="muted"></div>
+      </div>
+    </div>
+    <div class="progress" aria-hidden="true"><div class="progress-fill"></div></div>
+    <div id="live-found" class="muted"></div>
+  </section>
+
+  <section id="profiles" class="profiles" hidden></section>
+
+  <section id="crew-result" hidden>
+    <div class="matches-head">
+      <h2>Твоя невидимая тусовка</h2>
+      <span class="muted">люди, которых судьба подкидывала тебе в матчи без всякой пати</span>
+    </div>
+    <div id="crew-summary" class="summary-notes"></div>
+    <ol id="crew-list" class="matches"></ol>
+    <div id="crew-notes" class="summary-notes"></div>
+  </section>
+
+  <section id="match-result" hidden>
+    <div id="match-card" class="card match-head-card"></div>
+    <div class="matches-head">
+      <h2>Игроки матча</h2>
+      <span class="muted">по последним ~2000 матчам каждого · сортировка по числу встреч</span>
+    </div>
+    <ol id="match-players" class="matches"></ol>
+  </section>
+
+  <section id="result" hidden>
+    <div id="summary" class="summary"></div>
+    <div id="matches-head" class="matches-head"></div>
+    <ol id="matches" class="matches"></ol>
+    <button type="button" class="ghost more-btn" id="more-btn" hidden></button>
+  </section>
+
+  <footer class="site-footer">
+    Данные: <a href="https://www.opendota.com" target="_blank" rel="noopener">OpenDota API</a> ·
+    неофициальный фан-сервис, не связанный с Valve ·
+    бесплатный API ограничен ~60 запросами в минуту
+  </footer>
+
+</div>
+<script src="app.js?v=13"></script>
+</body>
+</html>
